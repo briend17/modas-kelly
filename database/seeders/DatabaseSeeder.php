@@ -13,6 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        /*Usuario administrador de la tienda, el registro de usuarios por interfaz solo crea usuarios de tipo cliente*/
+        \App\Models\User::create([
+            'name' => 'Kelly Sogamozo',
+            'email' => 'admin@modaskelly.com.co',
+            'password' => bcrypt('87654321'),
+            'profile' => 'Administrador',
+        ]);
     }
 }

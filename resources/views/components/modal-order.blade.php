@@ -1,5 +1,5 @@
 <!-- component -->
-@props(['title','name','email'])
+@props(['title','name','email','document_number'])
 <!-- overlay -->
 <div id="modal_overlay" class="hidden absolute inset-0 h-full w-full flex justify-center items-start md:items-center pt-10 md:pt-0">
 
@@ -13,6 +13,7 @@
     &cross;
     </button>
 
+    <form method="POST" action="{{ route('orders.store') }}">
     <!-- header -->
     <div class="px-4 py-3 border-b border-gray-200">
     <h2 class="text-xl font-semibold text-gray-600">{{ $title }}</h2>
@@ -20,36 +21,52 @@
 
     <!-- body -->
     <div class="w-full p-3">
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
+        @csrf
+        <!-- customer document type -->
+        <div>
+            <x-label for="document_type" :value="__('Tipo de documento')" />
 
-            <!-- Name -->
-            <div>
-                <x-label for="name" :value="__('Nombre')" />
+            <x-select id="document_type" class="block mt-1 w-full" name="customer_document_type" required autofocus />
+        </div>
+        <!-- customer document number -->
+        <div>
+            <x-label for="document_number" :value="__('Número de documento')" />
 
-                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="$name" required autofocus />
-            </div>
+            <x-input id="document_number" class="block mt-1 w-full" type="number" name="customer_document_number" :value="$document_number??''" required />
+        </div>
+        <!-- customer Name -->
+        <div>
+            <x-label for="name" :value="__('Nombre')" />
 
-            <!-- Email Address -->
-            <div class="mt-4">
-                <x-label for="email" :value="__('Email')" />
+            <x-input id="name" class="block mt-1 w-full" type="text" name="customer_name" :value="$name" required />
+        </div>
 
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="$email" required />
-            </div>
+        <!-- customer  Email Address -->
+        <div class="mt-4">
+            <x-label for="email" :value="__('Email')" />
 
+            <x-input id="email" class="block mt-1 w-full" type="email" name="customer_email" :value="$email" required />
+        </div>
+        <!-- customer mobile -->
+        <div class="mt-4">
+            <x-label for="order_mobile" :value="__('Número celular')" />
 
-        </form>
+            <x-input id="order_mobile" class="block mt-1 w-full" type="tel" name="customer_mobile" required />
+        </div>
+
     </div>
 
     <!-- footer -->
     <div class="absolute bottom-0 left-0 px-4 py-3 border-t border-gray-200 w-full flex justify-end items-center gap-3">
-    <button class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">Guardar</button>
+    <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">    Guardar
+    </button>
     <button
         onclick="openModal(false)"
         class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white focus:outline-none">
         Cerrar
     </button>
     </div>
+    </form>
 </div>
 
 </div>

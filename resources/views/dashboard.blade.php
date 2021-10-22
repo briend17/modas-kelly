@@ -48,5 +48,6 @@
         :title="__('Confirmar orden')"
         :name="Auth::user()->name"
         :email="Auth::user()->email"
+        :document_number="Auth::user()->document_number"
     />
 </x-app-layout>
