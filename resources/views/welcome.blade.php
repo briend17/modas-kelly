@@ -22,18 +22,16 @@
     </head>
     <body class="antialiased bg-pink-400">
       @if (Route::has('login'))
-        <div class="hidden fixed top-0 px-6 py-4 sm:block">
+        <div class="fixed top-0 px-6 py-4 sm:block">
             <h2 class="text-3xl md:text-5xl fixed text-white">Modas Kelly</h2>
             <div class="fixed right-5">
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Dashboard</a>
-                @else
+                @if(!Auth::check())
                     <a href="{{ route('login') }}" class="text-md text-white dark:text-gray-500 hover:text-gray-300">Ingresar</a>
 
                     @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="ml-4 text-md text-white hover:text-gray-300 dark:text-gray-500">Regístrate</a>
+                        <a href="{{ route('register') }}" class="md:inline-block hidden ml-4 text-md text-white hover:text-gray-300 dark:text-gray-500">Regístrate</a>
                     @endif
-                @endauth
+                @endif
             </div>
         </div>
       @endif
@@ -53,7 +51,7 @@
             <div class="p-8 mt-12 mb-6 md:mb-0 md:mt-50 ml-0 md:ml-12 lg:w-2/3  justify-center">
               <div class="h-48 flex flex-wrap content-center">
                 <div class="flex justify-center items-center">
-                    <img class="block top-10 mt-24 md:mt-0 p-8 md:p-0 rounded-3xl xl:h-2/4 h-3/4 md:w-4/5"  src="{{ asset('img/compras-1.jpg') }}">
+                    <img class="block top-10 mt-24 md:mt-0 p-8 md:p-0 rounded-3xl md:w-4/5"  src="{{ asset('img/portada.jpg') }}">
                 </div>
               </div>
             </div>
