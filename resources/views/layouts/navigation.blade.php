@@ -10,6 +10,13 @@
                     <x-nav-link :href="route('dashboard')" >
                         {{ __('Modas Kelly') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('orders.index')" >
+                        @if(Auth::user()->profile == 'Administrador')
+                            {{ __('Pedidos registrados') }}
+                        @else
+                            {{ __('Mis pedidos') }}
+                        @endif
+                    </x-nav-link>
                 </div>
             </div>
 
