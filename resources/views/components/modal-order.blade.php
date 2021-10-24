@@ -1,10 +1,17 @@
 <!-- component -->
-@props(['title','name','email','document_number'])
+@props(['title'])
+@php
+    $name = Auth::user()->name;
+    $email = Auth::user()->email;
+    $document_type = Auth::user()->document_type;
+    $document_number = Auth::user()->document_number;
+    $mobile = Auth::user()->mobile;
+@endphp
 <!-- overlay -->
-<div id="modal_overlay" class="hidden absolute inset-0 h-full w-full flex justify-center items-start md:items-center pt-10 md:pt-0">
+<div id="modal_overlay" class="hidden bg-black bg-opacity-30 absolute inset-0 h-full w-full flex justify-center items-start md:items-center pt-10 md:pt-0">
 
 <!-- modal -->
-<div id="modal" class="pacity-0 transform -translate-y-full scale-150  relative w-10/12 md:w-1/2  h-3/4 bg-white rounded shadow-lg transition-opacity transition-transform duration-300">
+<div id="modal" class="pacity-0 transform -translate-y-full scale-150  relative w-10/12 md:w-1/2  h-auto bg-white rounded shadow-lg transition-opacity transition-transform duration-300">
 
     <!-- button close -->
     <button
@@ -26,13 +33,13 @@
         <div>
             <x-label for="document_type" :value="__('Tipo de documento')" />
 
-            <x-select id="document_type" class="block mt-1 w-full" name="customer_document_type" required autofocus />
+            <x-select id="document_type" class="block mt-1 w-full" name="customer_document_type" :value="$document_type" required />
         </div>
         <!-- customer document number -->
         <div>
             <x-label for="document_number" :value="__('Número de documento')" />
 
-            <x-input id="document_number" class="block mt-1 w-full" type="number" name="customer_document_number" :value="$document_number??''" required />
+            <x-input id="document_number" class="block mt-1 w-full" type="number" name="customer_document_number" :value="$document_number" required />
         </div>
         <!-- customer Name -->
         <div>
@@ -51,16 +58,18 @@
         <div class="mt-4">
             <x-label for="order_mobile" :value="__('Número celular')" />
 
-            <x-input id="order_mobile" class="block mt-1 w-full" type="tel" name="customer_mobile" required />
+            <x-input id="order_mobile" class="block mt-1 w-full" type="tel" name="customer_mobile" :value="$mobile" required />
         </div>
 
     </div>
 
     <!-- footer -->
-    <div class="absolute bottom-0 left-0 px-4 py-3 border-t border-gray-200 w-full flex justify-end items-center gap-3">
-    <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">    Guardar
+    <div class="bottom-0 left-0 px-4 py-3 border-t border-gray-200 w-full flex justify-end items-center gap-3">
+    <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">
+        Confirmar
     </button>
     <button
+        type="button"
         onclick="openModal(false)"
         class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white focus:outline-none">
         Cerrar
@@ -74,9 +83,13 @@
 <script>
 const modal_overlay = document.querySelector('#modal_overlay');
 const modal = document.querySelector('#modal');
+const body = document.querySelector('html body');
+const contentBody = document.querySelector('.content-body');
 
 function openModal (value){
     const modalCl = modal.classList
+    const bodyCl = body.classList
+    const contentBodyCl = contentBody.classList
     const overlayCl = modal_overlay
 
     if(value){
@@ -85,12 +98,16 @@ function openModal (value){
         modalCl.remove('opacity-0')
         modalCl.remove('-translate-y-full')
         modalCl.remove('scale-150')
+        bodyCl.add('overflow-hidden')
+        contentBodyCl.add('overflow-hidden')
     }, 100);
     } else {
     modalCl.add('-translate-y-full')
     setTimeout(() => {
         modalCl.add('opacity-0')
         modalCl.add('scale-150')
+        bodyCl.remove('overflow-hidden')
+        contentBodyCl.remove('overflow-hidden')
     }, 100);
     setTimeout(() => overlayCl.classList.add('hidden'), 300);
     }

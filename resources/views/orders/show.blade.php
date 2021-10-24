@@ -11,7 +11,7 @@
                     <div class="flex-wrap items-top justify-center py-4 sm:pt-0" >
                     <h2 class="text-center font-bold text-xl">Resumen del pedido</h2>
                     <hr>
-                    <table class="table-fixed">
+                    <table class="table-fixed my-2">
                       <thead>
                         <tr>
                           <th class="w-1/2 text-left">Cliente</th>
@@ -35,8 +35,8 @@
                         </tr>
                       </tbody>
                     </table>
-                    <hr><br>
-                    <div class="group w-1/2">
+                    <hr>
+                    <div class="group w-1/2 mx-auto my-2">
                         <div class="bg-gray-200 rounded-lg overflow-hidden ">
                           <img src="{{ asset('img/blusas.jpg') }}" alt="Person using a pen to cross a task off a productivity paper card." class="h-1/2 object-center object-cover group-hover:opacity-75">
                         </div>
@@ -49,9 +49,27 @@
                             </p>
                         </div>
                       </div>
-                      <hr><br>
-                     <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">Continuar con el pago
-                    </button>
+                        @if($order->status != 'PAYED')
+                            @if($order->user_id == Auth::id())
+                            <hr>
+                            <form method="POST" action="{{ route('transactions.store') }}">
+                                @csrf
+                                <div class="py-3">
+                                    <button type="submit" class="float-right bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">Continuar con el pago
+                                    </button>
+                                </div>
+                            </form>
+                            @endif
+                        @else
+                            <div class="py-3 w-1/2 mx-auto">
+                                <h2 class="bg-blue-500 px-4 py-2 rounded text-white text-center">
+                                    Pago realizado
+                                </h2>
+                                <p>
+                                    Su pedido esta en camino, muchas gracias por preferirnos...
+                                </p>
+                            </div>
+                        @endif
                 </div>
             </div>
         </div>
