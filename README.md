@@ -30,12 +30,14 @@
 </ul>
 
 ## Configuración placetopay
-    <p>
-        Configurar estas variables de entorno en el archivo .env
-    </p>
+    Configurar estas variables de entorno en el archivo .env
+        
     PLACETOPAY_LOGIN=// Provided by PlacetoPay
     PLACETOPAY_SECRET_KEY=// Provided by PlacetoPay
     PLACETOPAY_BASE_ENDPOINT="https:// Provided by PlacetoPay
+    
+    Ejecutar en linea de comandos:
+    php artisan config:cache
 
 ## Credenciales de acceso
 
@@ -56,9 +58,6 @@
     </li>
     <li>
         Traits, para manejo de consecutivos, parametrizables en longitud y prefijo; y para gestionar conexión placetopay
-    </li>
-    <li>
-        Laravel TDD
     </li>
     <li>
         Relaciones polimorficas de eloquent, para usar un mismo modelo y entidad en el manejo de consecutivos a cualquer otro modelo.
