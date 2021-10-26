@@ -15,6 +15,17 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_code',50)->nullable();
+            $table->string('transaction_status',50)->nullable();
+            $table->integer('transaction_request_id')->nullable();
+            $table->text('transaction_process_url')->nullable();
+            $table->string('transaction_message_request')->nullable();
+            $table->text('transaction_payment_response')->nullable();
+            $table->string('transaction_message_payment')->nullable();
+            $table->string('transaction_message_response')->nullable();
+            $table->string('transaction_created',50)->nullable();
+            $table->string('transaction_expired',50)->nullable();
+            $table->bigInteger('order_id')->unsigned();
             $table->timestamps();
         });
     }

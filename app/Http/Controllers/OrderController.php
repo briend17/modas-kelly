@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Dnetix\Redirection\PlacetoPay;
 
 class OrderController extends Controller
 {
@@ -14,12 +15,12 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $query = Order::select('*');
         if(\Auth::user()->profile == 'Cliente') $orders = $query->where('user_id',\Auth::id());
         $orders = $query->orderBy('id','desc')->get();
-        //dd($orders);
+
         return view('orders.index',compact('orders'));
     }
 
@@ -35,7 +36,6 @@ class OrderController extends Controller
             $input = $request->all();
             $input['user_id'] = \Auth::id();
             $input['order_amount'] = self::ORDER_AMOUNT;
-            //dd($input);
 
             DB::beginTransaction();
             $order = Order::create($input);
@@ -52,29 +52,8 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show(Request $request,Order $order)
     {
-        session(["order" => $order->id]);
-        //dd('00');
         return view('orders.show',compact('order'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Order $order)
-    {
-        /*
-            hacer update a status pedido
-        - redireccionar a show
-         */
-        dd(session('status'));
-        $order->status = session("status");
-        $order->save();
-        return redirect()->action('OrderController@show', $order->id);
     }
 }
