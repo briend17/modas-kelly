@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Dnetix\Redirection\PlacetoPay;
 
 class HomeController extends Controller
 {

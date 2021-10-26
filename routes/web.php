@@ -19,7 +19,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'App\Http\Controllers\HomeController@index')->name('dashboard');
     Route::resource('orders','App\Http\Controllers\OrderController');
     Route::resource('transactions', 'App\Http\Controllers\TransactionController');
-    Route::POST('transaction', 'App\Http\Controllers\TransactionController@receivePay')->name('transaction.index');
 });
 
 require __DIR__.'/auth.php';

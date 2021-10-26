@@ -1,67 +1,77 @@
 <?php
 namespace App\Traits;
 
+use DB;
+use App\Models\Consecutivo;
+use App\Models\Order;
+use App\Models\Transaction;
+use Dnetix\Redirection\PlacetoPay;
+
 trait managementPlaceToPayTrait {
-     // if (function_exists('random_bytes')) {
-        //     $nonce = bin2hex(random_bytes(16));
-        // } elseif (function_exists('openssl_random_pseudo_bytes')) {
-        //     $nonce = bin2hex(openssl_random_pseudo_bytes(16));
-        // } else {
-        //     $nonce = mt_rand();
-        // }
 
-        // $nonceBase64 = base64_encode($nonce);
+   public static function initPlaceToPay()
+   {
+      return new PlacetoPay([
+         'login' => config('services.placetopay.login'), // Provided by PlacetoPay
+         'tranKey' => config('services.placetopay.secret_key'), // Provided by PlacetoPay
+         'baseUrl' => config('services.placetopay.base_url'), // Provided by PlacetoPay
+      ]);
+   }
 
-        // $seed = date('c');
+   public static function getPlaceToPay($order,$transaction)
+   {
+      $order = Order::select('id','order_reference','order_amount')->where('id',$order)->first();
+      $placetopay = Transaction::initPlaceToPay();
+      $reference = $order->order_reference;
+      $description = "Pago de pedido: ".$reference;
 
-        // $secretKey = '024h1IlD'; //De este parámetro tengo la duda si es el correcto
+      $request = [
+         "payment" => [
+             "reference" => $reference,
+             "description" => $description,
+             "amount" => [
+                 "currency" => "COP",
+                 "total" => $order->order_amount,
+             ],
+         ],
+         "expiration" => date("c", strtotime("+1 days")),
+         "returnUrl" => route('transactions.show',['transaction' => $transaction]),
+         "ipAddress" => "127.0.0.1",
+         "userAgent" => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
+      ];
 
-        // $tranKey = base64_encode(sha1($nonce . $seed  . $secretKey, true));
+      return $placetopay->request($request);
+   }
 
+   public static function registerTransaction($order)
+   {
+      $transaction = Transaction::create([
+          'transaction_created' => date("c"),
+          'transaction_expired' => date("c", strtotime("+1 days")),
+          'order_id' => $order,
+      ]);
 
-        // $data_api = [
-        //     'login' => '6dd490faf9cb87a9862245da41170ff2', // Provided by PlacetoPay
-        //     'tranKey' => $tranKey, // Provided by PlacetoPay
-        //     'baseUrl' => 'https://test.placetopay.com/redirection/api/session',
-        //     'seed' => $seed,
-        //     'nonce' => $nonceBase64,
-        //     'secret' => '024h1IlD'
-        //     //'timeout' => 10, // (optional) 15 by default
-        // ];
-        // $placetopay = new PlacetoPay([
-        //     'login' => '6dd490faf9cb87a9862245da41170ff2', // Provided by PlacetoPay
-        //     'tranKey' => $tranKey, // Provided by PlacetoPay
-        //     'baseUrl' => 'https://test.placetopay.com/redirection/api/session',
-        //     'seed' => $seed,
-        //     'nonce' => $nonceBase64,
-        //     'secret' => '024h1IlD'
-        //     //'timeout' => 10, // (optional) 15 by default
-        // ]);
-        // dd($data_api);
-        // $reference = '1';
-        // $request = [
-        //     "payment" => [
-        //         "reference" => $reference,
-        //         "description" => "Testing payment",
-        //         "amount" => [
-        //             "currency" => "USD",
-        //             "total" => 120,
-        //         ],
-        //     ],
-        //     "expiration" => date("c", strtotime("+2 days")),
-        //     "returnUrl" => "http://127.0.0.1:8000/orders/?order=" . $reference,
-        //     "ipAddress" => "127.0.0.1",
-        //     "userAgent" => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
-        // ];
+      return $transaction;
+   }
 
-        // $response = $placetopay->request($request);
-        // if ($response->isSuccessful()) {
-        //     // STORE THE $response->requestId() and $response->processUrl() on your DB associated with the payment order
-        //     // Redirect the client to the processUrl or display it on the JS extension
-        //     $response->processUrl();
-        // } else {
-        //     // There was some error so check the message and log it
-        //     $response->status()->message();
-        // }
-        // dd($response);
+   public static function placeToPayResponse($transaction)
+   {
+      try{
+         DB::beginTransaction();
+             //Obtener instancia placetopay
+             $placetopay = Transaction::initPlaceToPay();
+             //cosultar status de la transaccion segun si requiestID
+             $response = $placetopay->query($transaction->transaction_request_id);
+             //actualizar valores del response del sitio placetopay
+             $transaction->transaction_status = $response->status()->status();
+             $transaction->transaction_payment_response = json_encode($response->payment());
+             $transaction->transaction_message_payment = (count($response->payment()))? $response->payment()[0]->status()->message() : null;
+             $transaction->transaction_message_response = $response->status()->message();
+             $transaction->save();
+         DB::commit();
+     }catch(Exception $e){
+         DB::rollback();
+     }
+   }
+
 }

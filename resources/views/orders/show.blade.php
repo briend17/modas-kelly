@@ -55,6 +55,7 @@
                             <form method="POST" action="{{ route('transactions.store') }}">
                                 @csrf
                                 <div class="py-3">
+                                    <input type="hidden" name="ord" value="{{ $order->id }}" />
                                     <button type="submit" class="float-right bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white focus:outline-none">Continuar con el pago
                                     </button>
                                 </div>

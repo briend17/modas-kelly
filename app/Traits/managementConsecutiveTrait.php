@@ -5,7 +5,7 @@ use App\Models\Consecutivo;
 
 trait managementConsecutiveTrait {
 
-    public function getConsecutivo($instancia,$user_id, $longitud = 8,$prefijo = null) {
+     public function getConsecutivo($instancia,$user_id, $longitud = 8,$prefijo = null) {
         $input = [];
         $modelo = $instancia->consecutivo()->getMorphClass();
         $consecutivo = Consecutivo::where('consecutable_type',$modelo)
